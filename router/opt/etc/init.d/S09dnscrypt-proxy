@@ -1,0 +1,10 @@
+#!/bin/sh
+
+ENABLED=yes
+PROCS=dnscrypt-proxy
+ARGS="-config /opt/etc/dnscrypt-proxy.toml -logfile /opt/var/log/dnscrypt-proxy.log -pidfile /var/run/dnscrypt-proxy.pid"
+PREARGS=""
+DESC=
+PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+. /opt/etc/init.d/rc.func

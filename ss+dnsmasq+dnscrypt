@@ -2,7 +2,7 @@
 
 ssh "$*" /opt/etc/toggle_proxy.sh disable
 
-self="$(curl -sS https://raw.githubusercontent.com/zw963/deployment_bash/v0.4.6/deploy_start.sh)" && eval "$self"
+self="$(cat deploy_start.sh)" && eval "$self"
 
 # self="$(cat ~/Project/deployment_bash/deploy_start.sh)" && eval "$self"
 
@@ -13,16 +13,23 @@ if [ ! -e ./router/opt/etc/shadowsocks.json ];then
     exit
 fi
 
-copy router/opt/etc/dnscrypt-proxy.sh /opt/etc
+#copy router/opt/etc/dnscrypt-proxy.sh /opt/etc
 copy router/opt/etc/dnsmasq.d/foreign_domains.conf /opt/etc/dnsmasq.d/foreign_domains.conf
 copy router/opt/etc/iptables.sh /opt/etc
 copy router/opt/etc/toggle_proxy.sh /opt/etc
 copy router/opt/etc/switch_proxy.sh /opt/etc
 copy router/opt/etc/patch_router /opt/etc
-copy router/opt/etc/restart_dnsmasq /opt/etc
+copy router/opt/etc/restart_dnsmasq /opt/bin/
 copy router/opt/etc/localips /opt/etc
 copy router/opt/etc/update_ip_whitelist /opt/etc
 copy router/opt/etc/update_dns_whitelist /opt/etc
+copy router/opt/etc/init.d/S22shadowsocksr /opt/etc/init.d/
+
+
+copy router/opt/etc/dnscrypt-proxy.toml /opt/etc/dnscrypt-proxy.toml
+copy router/opt/etc/init.d/S09dnscrypt-proxy /opt/etc/init.d/
+copy router/opt/sbin/dnscrypt-proxy /opt/sbin/dnscrypt-proxy
+
 
 copy router/opt/etc/shadowsocks.* /opt/etc
 [ -e router/opt/etc/user_ip_whitelist.txt ] && copy router/opt/etc/user_ip_whitelist.txt /opt/etc
@@ -30,8 +37,23 @@ copy router/opt/etc/shadowsocks.* /opt/etc
 [ -e router/opt/etc/user_domain_name_blocklist.txt ] && copy router/opt/etc/user_domain_name_blocklist.txt /opt/etc
 [ -e router/opt/etc/user_domain_name_gfwlist.txt ] && copy router/opt/etc/user_domain_name_gfwlist.txt /opt/etc
 
+
 deploy_start
 
+# dnsmasq
+dnsmasq_dir=/opt/etc/dnsmasq.d
+if ! grep -qs "^conf-dir=$dnsmasq_dir/,\*\.conf$" /etc/dnsmasq.conf; then
+    echo "conf-dir=$dnsmasq_dir/,*.conf" >> /etc/dnsmasq.conf
+fi
+
+sed -i 's/log-facility=\/var\/log\/dnsmasq.log/log-facility=\/opt\/var\/log\/dnsmasq.log/g' /etc/dnsmasq.conf
+
+# dnscrypt
+chmod +x /opt/etc/init.d/S09dnscrypt-proxy
+
+
+/opt/etc/init.d/S09dnscrypt-proxy restart
+/opt/bin/restart_dnsmasq
 # ----------------------------------------------------
 #
 # 下面的脚本会在远程路由器之上执行, 请根据所需，酌情修改。
@@ -57,17 +79,8 @@ ipset_protocal_version=$(ipset -v |grep -o 'version.*[0-9]' |head -n1 |cut -d' '
 
 set -e
 
-opkg install libc libssp libev libmbedtls libpcre libpthread libsodium haveged zlib libopenssl
+opkg install libc libssp libev libmbedtls libpcre libpthread libsodium haveged zlib libopenssl ca-bundle shadowsocksr-libev
 
-if opkg find shadowsocks-libev |grep -qs -e '.*'; then
-    opkg install shadowsocks-libev
-elif opkg find shadowsocks-libev-ss-redir |grep -qs -e '.*'; then
-    opkg install shadowsocks-libev-config shadowsocks-libev-ss-redir
-fi
-
-opkg --autoremove remove dnscrypt-proxy
-opkg install dnscrypt-proxy
-echo '上一个命令的自动选择, 会造成这一行代码执行失败, 不要移除.'
 opkg install bind-dig
 
 if [ "$ipset_protocal_version" == 6 ]; then
@@ -90,8 +103,6 @@ replace_regex '"local_address".*' '"local_address":'" \"$targetip\"," /opt/etc/s
 # 将 dnscrypt 作为 dnsmasq 的上游 DNS 服务器
 replace_regex 'server=/#/.*' 'server=/#/127.0.0.1#65053' /opt/etc/dnsmasq.d/foreign_domains.conf
 #
-# 默认 shadowsocks 启动脚本使用 ss-redir 而不是 ss-local, 端口 1080.
-replace_string ss-local ss-redir /opt/etc/init.d/S22shadowsocks
 
 # ----------------------------------------------------
 #
@@ -100,9 +111,9 @@ replace_string ss-local ss-redir /opt/etc/init.d/S22shadowsocks
 # ---------------------------------------------------
 
 # 每隔 1 分钟检测下所有的服务是否运行.
-add_service wan-start 'cru a run-services "*/1 * * * *" "/jffs/scripts/services-start"'
+add_service wan-start 'cru a run-services "*/5 * * * *" "/jffs/scripts/services-start"'
 # 每隔 3 分钟检测下 iptables 是否失效.
-add_service wan-start 'cru a run-iptables "*/3 * * * *" "/opt/etc/iptables.sh"'
+add_service wan-start 'cru a run-iptables "*/5 * * * *" "/opt/etc/iptables.sh"'
 
 # 星期一的 3:25 分升级 IP 白名单.
 chmod +x /opt/etc/update_ip_whitelist && /opt/etc/update_ip_whitelist

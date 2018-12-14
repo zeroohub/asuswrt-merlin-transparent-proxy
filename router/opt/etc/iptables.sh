@@ -43,7 +43,7 @@ else
 fi
 
 # 如果没有备份 iptables rule, 就备份它.
-[ -f /tmp/iptables.rules ] || iptables_save > /tmp/iptables.rules
+[ -f /tmp/iptables.rules ] || iptables_save > /opt/tmp/iptables.rules
 
 OLDIFS="$IFS" && IFS=$'\n'
 if ipset -L CHINAIPS &>/dev/null; then
