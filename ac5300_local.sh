@@ -1,31 +1,28 @@
 #!/bin/bash
 
-#ssh "$*" /opt/etc/toggle_proxy.sh disable
+ssh "$*" /opt/bin/toggle_proxy disable
 
 self="$(cat deploy_start.sh)" && eval "$self"
-
-# self="$(cat ~/Project/deployment_bash/deploy_start.sh)" && eval "$self"
-
-export target=$1
 
 if [ ! -e ./router/opt/etc/shadowsocks.json ];then
     echo '请首先定义 router/opt/etc/shadowsocks.json'
     exit
 fi
 
-copy ac5300_router.sh /opt/tmp
-copy deploy_start.sh /opt/tmp
-copy router/opt/etc/iptables.sh /opt/etc
-copy router/opt/etc/toggle_proxy.sh /opt/etc
-copy router/opt/etc/switch_proxy.sh /opt/etc
-copy router/opt/etc/patch_router /opt/etc
+copy ac5300_router.sh /opt/tmp/
+copy deploy_start.sh /opt/tmp/
+copy router/opt/etc/iptables.sh /opt/bin/update_iptables
+copy router/opt/etc/toggle_proxy.sh /opt/bin/toggle_proxy
+copy router/opt/etc/switch_proxy.py /opt/bin/switch_proxy
+copy router/opt/etc/patch_router /opt/bin/
 copy router/opt/etc/restart_dnsmasq /opt/bin/
-copy router/opt/etc/localips /opt/etc
-copy router/opt/etc/update_ip_whitelist /opt/etc
-copy router/opt/etc/update_dns_whitelist /opt/etc
+copy router/opt/etc/localips /opt/etc/
+copy router/opt/etc/update_ip_whitelist /opt/bin/
+copy router/opt/etc/update_dns_whitelist /opt/bin/
 
 copy router/opt/etc/init.d/S22shadowsocksr /opt/etc/init.d/
-copy router/opt/etc/shadowsocks.* /opt/etc
+copy router/opt/etc/shadowsocks.json /opt/etc/
+copy router/opt/etc/subscribes.txt /opt/etc/
 
 
 copy router/opt/etc/dnsmasq.d/foreign_domains.conf /opt/etc/dnsmasq.d/foreign_domains.conf

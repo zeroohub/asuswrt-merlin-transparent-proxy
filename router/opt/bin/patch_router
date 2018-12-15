@@ -17,12 +17,14 @@ if [ "$ipset_protocal_version" == 6 ]; then
 else
     ipset -q -A CHINAIP $remote_server_ip
 fi
-/opt/etc/init.d/S22shadowsocks restart
+/opt/etc/init.d/S22shadowsocksr restart
 
 dnsmasq_dir=/opt/etc/dnsmasq.d
 
 if [ -d "$dnsmasq_dir" ]; then
     # 为默认的 /etc/dnsmasq.conf 新增配置.
+    sed -i "s#\# conf-dir=/opt/etc/dnsmasq.d/,\*\.conf#conf-dir=/opt/etc/dnsmasq.d/,\*\.conf#g" /etc/dnsmasq.conf
+
     if ! grep -qs "^conf-dir=$dnsmasq_dir/,\*\.conf$" /etc/dnsmasq.conf; then
         echo "conf-dir=$dnsmasq_dir/,*.conf" >> /etc/dnsmasq.conf
     fi
@@ -31,8 +33,8 @@ if [ -d "$dnsmasq_dir" ]; then
         echo 'log-queries' >> /etc/dnsmasq.conf
     fi
 
-    if ! grep -qs "^log-facility=/var/log/dnsmasq\.log$" /etc/dnsmasq.conf; then
-        echo 'log-facility=/var/log/dnsmasq.log' >> /etc/dnsmasq.conf
+    if ! grep -qs "^log-facility=/opt/var/log/dnsmasq\.log$" /etc/dnsmasq.conf; then
+        echo 'log-facility=/opt/var/log/dnsmasq.log' >> /etc/dnsmasq.conf
     fi
 
     accelerated=accelerated-domains.china.conf
@@ -44,11 +46,11 @@ if [ -d "$dnsmasq_dir" ]; then
     user_domain_name_gfwlist=/opt/etc/user_domain_name_gfwlist.txt
 
     if ! [ -s $dnsmasq_dir/$accelerated.bak ]; then
-        /opt/etc/update_dns_whitelist
+        /opt/bin/update_dns_whitelist
     fi
 
     if ! [ -s /opt/etc/chinadns_chnroute.txt ]; then
-        /opt/etc/update_ip_whitelist
+        /opt/bin/update_ip_whitelist
     fi
 
     sed "s#114\.114\.114\.114#${default_dns_ip}#" $dnsmasq_dir/$accelerated.bak > $dnsmasq_dir/$accelerated
@@ -79,14 +81,16 @@ if [ -d "$dnsmasq_dir" ]; then
     fi
     IFS=$OLDIFS
 
-    chmod +x /opt/etc/restart_dnsmasq && /opt/etc/restart_dnsmasq
+    chmod +x /opt/bin/restart_dnsmasq && /opt/bin/restart_dnsmasq
 fi
 
+# never
 if [ -e /opt/etc/init.d/S56chinadns ]; then
     sed -i "s#-s [0-9.]*,#-s ${default_dns_ip},#" /opt/etc/init.d/S56chinadns
     /opt/etc/init.d/S56chinadns restart
 fi
 
+# never
 if [ -e /opt/etc/dnscrypt-proxy.sh -a -e /opt/etc/init.d/S09dnscrypt-proxy ]; then
     source /opt/etc/dnscrypt-proxy.sh
 
@@ -96,4 +100,4 @@ if [ -e /opt/etc/dnscrypt-proxy.sh -a -e /opt/etc/init.d/S09dnscrypt-proxy ]; th
     /opt/etc/init.d/S09dnscrypt-proxy restart
 fi
 
-chmod +x /opt/etc/iptables.sh && /opt/etc/iptables.sh
+chmod +x /opt/bin/update_iptables && /opt/bin/update_iptables

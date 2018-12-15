@@ -4,8 +4,6 @@ set -e
 
 echo 'Update DNS whitelist ...'
 
-/opt/etc/toggle_proxy.sh disable
-
 accelerated=accelerated-domains.china.conf
 google=google.china.conf
 apple=apple.china.conf
@@ -17,6 +15,8 @@ curl -L $download_url/$accelerated -o $dnsmasq_dir/$accelerated.bak
 curl -L $download_url/$google -o $dnsmasq_dir/$google.bak
 curl -L $download_url/$apple -o $dnsmasq_dir/$apple.bak
 
-/opt/etc/toggle_proxy.sh
+/opt/bin/toggle_proxy disable
+
+/opt/bin/toggle_proxy
 
 echo 'Update DNS whitelist done.'

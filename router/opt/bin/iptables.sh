@@ -43,7 +43,7 @@ else
 fi
 
 # 如果没有备份 iptables rule, 就备份它.
-[ -f /tmp/iptables.rules ] || iptables_save > /opt/tmp/iptables.rules
+[ -f /opt/tmp/iptables.rules ] || iptables_save > /opt/tmp/iptables.rules
 
 OLDIFS="$IFS" && IFS=$'\n'
 if ipset -L CHINAIPS &>/dev/null; then
@@ -89,10 +89,11 @@ iptables -t nat -A SHADOWSOCKS_TCP -p tcp -j REDIRECT --to-ports $local_redir_po
 # Apply tcp rule
 iptables -t nat -A PREROUTING -p tcp -j SHADOWSOCKS_TCP
 # 从路由器内访问时, 也是用这个 rule.
-# iptables -t nat -A OUTPUT -p tcp -j SHADOWSOCKS_TCP
+iptables -t nat -A OUTPUT -p tcp -j SHADOWSOCKS_TCP
 
+# if enable this, make sure, port 53 are exclude, since it's already use dnscrypt.
 # ====================== udp rule =======================
-
+#
 # 只有满足下面两个条件, 才需要 udp rule
 
 if ! modprobe xt_TPROXY; then
@@ -100,7 +101,7 @@ if ! modprobe xt_TPROXY; then
     exit 0
 fi
 
-if ! cat /opt/etc/init.d/S22shadowsocks |grep '^ARGS=' |grep -qs -e '-u'; then
+if ! cat /opt/etc/init.d/S22shadowsocksr |grep '^ARGS=' |grep -qs -e '-u'; then
     echo 'ss-redir not enable udp redir, skip UDP rule.'
     exit 0
 fi

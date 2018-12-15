@@ -1,13 +1,13 @@
 #!/bin/sh
 
-iptables_bak=/tmp/iptables.rules
+iptables_bak=/opt/tmp/iptables.rules
 
 if [ "$1" != 'enable' ] && [ ! -f $iptables_bak -o ! -f /tmp/patch_router_is_run ]; then
     # 如果不存在 iptables 备份文件, 表示未部署过, 无需 toggle proxy.
     exit
 fi
 
-if [ "$1" == 'disable' ] || [ -x /opt/etc/iptables.sh ]; then
+if [ "$1" == 'disable' ] || [ -x /opt/bin/update_iptables ]; then
     echo 'Disable proxy ...'
 
     ipset_protocal_version=$(ipset -v |grep -o 'version.*[0-9]' |head -n1 |cut -d' ' -f2)
@@ -26,8 +26,8 @@ if [ "$1" == 'disable' ] || [ -x /opt/etc/iptables.sh ]; then
         /opt/sbin/iptables-restore < $iptables_bak
     fi
 
-    chmod -x /opt/etc/iptables.sh
-    chmod -x /opt/etc/patch_router
+    chmod -x /opt/bin/update_iptables
+    chmod -x /opt/bin/patch_router
 
     iptables -t nat -F SHADOWSOCKS_TCP 2>/dev/null          # flush
     iptables -t nat -X SHADOWSOCKS_TCP 2>/dev/null          # --delete-chain
@@ -37,12 +37,12 @@ if [ "$1" == 'disable' ] || [ -x /opt/etc/iptables.sh ]; then
     iptables -t mangle -X SHADOWSOCKS_MARK 2>/dev/null
 
     sed -i "s#conf-dir=/opt/etc/dnsmasq.d/,\*\.conf#\# &#" /etc/dnsmasq.conf
-    /opt/etc/restart_dnsmasq
+    /opt/bin/restart_dnsmasq
     echo 'Proxy is disabled.'
 else
     echo 'Enable proxy ...'
-    chmod +x /opt/etc/iptables.sh
-    chmod +x /opt/etc/patch_router && /opt/etc/patch_router
+    chmod +x /opt/bin/update_iptables
+    chmod +x /opt/bin/patch_router && /opt/bin/patch_router
     echo 'Proxy is enabled.'
 fi
 

@@ -3,6 +3,10 @@
 /router/opt/etc/user_domain_name_gfwlist.txt
 /router/opt/etc/user_ip_whitelist.txt
 /router/opt/etc/dnscrypt-proxy.sh
+/router/opt/etc/shadowsocks.json
+/router/opt/etc/subscribes.txt
+
+
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
