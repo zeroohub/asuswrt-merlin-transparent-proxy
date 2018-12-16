@@ -1,7 +1,7 @@
 {
          "server": "xxx",
          "server_port": 1111,
-         "local_address": "192.168.50.1",
+         "local_address": "0.0.0.0",
          "local_port": 1080,
          "password": "xxxx",
          "method": "chacha20",

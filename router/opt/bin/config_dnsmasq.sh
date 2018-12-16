@@ -1,32 +1,36 @@
 #!/bin/sh
+dnsmasq_dir=/opt/etc/dnsmasq.d
+main_conf=/etc/dnsmasq.conf
+if [ "$1" == 'remove' ]; then
+    echo 'remove dnsmasq...'
+    sed -i "s#^conf-dir=$dnsmasq_dir/,\*\.conf##g" $main_conf
+    /opt/bin/restart_dnsmasq
+    exit 0
+fi
 
-resolv_file=$(cat /etc/dnsmasq.conf |grep 'resolv-file=' |tail -n1 |cut -d'=' -f2)
+echo "install dnsmasq..."
+
+resolv_file=$(cat ${main_conf} |grep 'resolv-file=' |tail -n1 |cut -d'=' -f2)
 
 if [ "$resolv_file" ]; then
-    default_dns_ip=$(cat $resolv_file |head -n1 |cut -d' ' -f2)
+    default_dns_ip=$(cat ${resolv_file} |head -n1 |cut -d' ' -f2)
 else
     default_dns_ip='114.114.114.114'
 fi
 
-ipset_protocal_version=$(ipset -v |grep -o 'version.*[0-9]' |head -n1 |cut -d' ' -f2)
-
-
-dnsmasq_dir=/opt/etc/dnsmasq.d
 
 if [ -d "$dnsmasq_dir" ]; then
-    # 为默认的 /etc/dnsmasq.conf 新增配置.
-    sed -i "s#\# conf-dir=/opt/etc/dnsmasq.d/,\*\.conf#conf-dir=/opt/etc/dnsmasq.d/,\*\.conf#g" /etc/dnsmasq.conf
 
-    if ! grep -qs "^conf-dir=$dnsmasq_dir/,\*\.conf$" /etc/dnsmasq.conf; then
-        echo "conf-dir=$dnsmasq_dir/,*.conf" >> /etc/dnsmasq.conf
+    if ! grep -qs "^conf-dir=$dnsmasq_dir/,\*\.conf$" $main_conf; then
+        echo "conf-dir=$dnsmasq_dir/,*.conf" >> $main_conf
     fi
 
-    if ! grep -qs "^log-queries$" /etc/dnsmasq.conf; then
-        echo 'log-queries' >> /etc/dnsmasq.conf
+    if ! grep -qs "^log-queries$" $main_conf; then
+        echo 'log-queries' >> $main_conf
     fi
 
-    if ! grep -qs "^log-facility=/opt/var/log/dnsmasq\.log$" /etc/dnsmasq.conf; then
-        echo 'log-facility=/opt/var/log/dnsmasq.log' >> /etc/dnsmasq.conf
+    if ! grep -qs "^log-facility=/opt/var/log/dnsmasq\.log$" $main_conf; then
+        echo 'log-facility=/opt/var/log/dnsmasq.log' >> $main_conf
     fi
 
     accelerated=accelerated-domains.china.conf
@@ -37,13 +41,6 @@ if [ -d "$dnsmasq_dir" ]; then
     user_domain_name_blocklist=/opt/etc/user_domain_name_blocklist.txt
     user_domain_name_gfwlist=/opt/etc/user_domain_name_gfwlist.txt
 
-    if ! [ -s $dnsmasq_dir/$accelerated.bak ]; then
-        /opt/bin/update_dns_whitelist
-    fi
-
-    if ! [ -s /opt/etc/chinadns_chnroute.txt ]; then
-        /opt/bin/update_ip_whitelist
-    fi
 
     sed "s#114\.114\.114\.114#${default_dns_ip}#" $dnsmasq_dir/$accelerated.bak > $dnsmasq_dir/$accelerated
     sed "s#114\.114\.114\.114#${default_dns_ip}#" $dnsmasq_dir/$google.bak > $dnsmasq_dir/$google
@@ -73,5 +70,5 @@ if [ -d "$dnsmasq_dir" ]; then
     fi
     IFS=$OLDIFS
 
-    chmod +x /opt/bin/restart_dnsmasq && /opt/bin/restart_dnsmasq
+    /opt/bin/restart_dnsmasq
 fi

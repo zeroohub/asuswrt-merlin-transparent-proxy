@@ -1,18 +1,46 @@
 #!/bin/sh
 
-# iptables 默认有四个表: raw, nat, mangle, filter, 每个表都有若干个不同的 chain.
-# 例如: filter 表包含 INPUT, FORWARD, OUTPUT 三个链, 下面创建了一个自定义 chain.
-if ! iptables -t nat -N SHADOWSOCKS_TCP; then
-    # 如果不成功, 表示已经执行过了, 直接退出.
-    # 经过测试, 梅林还是会经常删除自定义 iptables, 所以, 还是需要反复执行这个文件来确保有效.
-    exit
+iptables_bak=/opt/tmp/iptables.rules
+ipset_protocal_version=$(ipset -v |grep -o 'version.*[0-9]' |head -n1 |cut -d' ' -f2)
+
+if [ "$1" == 'remove' ]; then
+    echo 'remove iptables...'
+
+    ip route flush table 100
+
+    iptables -t nat -F SHADOWSOCKS_TCP          # flush
+    iptables -t nat -X SHADOWSOCKS_TCP         # --delete-chain
+    iptables -t mangle -F SHADOWSOCKS_UDP
+    iptables -t mangle -X SHADOWSOCKS_UDP
+    iptables -t mangle -F SHADOWSOCKS_MARK
+    iptables -t mangle -X SHADOWSOCKS_MARK
+
+    if [ "$ipset_protocal_version" == 6 ]; then
+        alias iptables='/usr/sbin/iptables'
+        ipset destroy CHINAIP
+        ipset destroy CHINAIPS
+        /usr/sbin/iptables-restore < $iptables_bak
+    else
+        alias iptables='/opt/sbin/iptables'
+        ipset -X CHINAIP
+        ipset -X CHINAIPS
+        /opt/sbin/iptables-restore < $iptables_bak
+    fi
+
+    exit 0
+fi
+
+echo "install iptables..."
+if iptables -t nat -L SHADOWSOCKS_TCP; then
+    echo "already installed"
+    exit 0
 fi
 
 remote_server_ip=$(cat /opt/etc/shadowsocks.json |grep 'server"' |cut -d':' -f2|cut -d'"' -f2)
 local_redir_ip=$(cat /opt/etc/shadowsocks.json |grep 'local_address"' |cut -d':' -f2|cut -d'"' -f2)
 local_redir_port=$(cat /opt/etc/shadowsocks.json |grep 'local_port' |cut -d':' -f2 |grep -o '[0-9]*')
 
-echo '[0m[33mApplying ipset rule, it maybe take several minute to finish ...[0m'
+echo 'Applying ipset rule, it maybe take several minute to finish ...'
 
 ipset_protocal_version=$(ipset -v |grep -o 'version.*[0-9]' |head -n1 |cut -d' ' -f2)
 
@@ -43,7 +71,7 @@ else
 fi
 
 # 如果没有备份 iptables rule, 就备份它.
-[ -f /opt/tmp/iptables.rules ] || iptables_save > /opt/tmp/iptables.rules
+[ -f $iptables_bak ] || iptables_save > $iptables_bak
 
 OLDIFS="$IFS" && IFS=$'\n'
 if ipset -L CHINAIPS &>/dev/null; then
@@ -79,7 +107,7 @@ fi
 IFS=$OLDIFS
 
 # ====================== tcp rule =======================
-
+iptables -t nat -N SHADOWSOCKS_TCP
 # 两个 ipset 中的 ip 直接返回.
 iptables -t nat -A SHADOWSOCKS_TCP -p tcp -m set --match-set CHINAIPS dst -j RETURN
 iptables -t nat -A SHADOWSOCKS_TCP -p tcp -m set --match-set CHINAIP dst -j RETURN

@@ -15,8 +15,4 @@ curl -L $download_url/$accelerated -o $dnsmasq_dir/$accelerated.bak
 curl -L $download_url/$google -o $dnsmasq_dir/$google.bak
 curl -L $download_url/$apple -o $dnsmasq_dir/$apple.bak
 
-/opt/bin/toggle_proxy disable
-
-/opt/bin/toggle_proxy
-
 echo 'Update DNS whitelist done.'

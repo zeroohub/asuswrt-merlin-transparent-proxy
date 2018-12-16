@@ -110,6 +110,13 @@ if __name__ == '__main__':
             conf = nodes[num][1]
             apply_config(conf)
             try:
+                check_output('ipset -N CHINAIP hash:ip 2>&1', shell=True)
+            except CalledProcessError as e:
+                if 'set with the same name already exists' in e.output:
+                    pass
+                else:
+                    raise
+            try:
                 check_output('ipset add CHINAIP {} 2>&1'.format(conf['server']), shell=True)
             except CalledProcessError as e:
                 if "it's already added" in e.output:

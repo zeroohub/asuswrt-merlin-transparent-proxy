@@ -12,13 +12,6 @@ fi
 
 cat /opt/tmp/chinadns_chnroute.txt | awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > /opt/etc/chinadns_chnroute.txt
 
-/opt/bin/toggle_proxy disable
-
-# never
-[ -f /opt/etc/init.d/S56chinadns ] && /opt/etc/init.d/S56chinadns restart
-
-/opt/bin/toggle_proxy
-
 echo 'Update IP whitelist done.'
 
 exit 0

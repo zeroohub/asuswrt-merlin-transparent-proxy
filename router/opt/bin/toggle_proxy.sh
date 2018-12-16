@@ -1,49 +1,10 @@
 #!/bin/sh
 
-iptables_bak=/opt/tmp/iptables.rules
-
-if [ "$1" != 'enable' ] && [ ! -f $iptables_bak -o ! -f /tmp/patch_router_is_run ]; then
-    # 如果不存在 iptables 备份文件, 表示未部署过, 无需 toggle proxy.
-    exit
-fi
-
-if [ "$1" == 'disable' ] || [ -x /opt/bin/update_iptables ]; then
-    echo 'Disable proxy ...'
-
-    ipset_protocal_version=$(ipset -v |grep -o 'version.*[0-9]' |head -n1 |cut -d' ' -f2)
-
-    ip route flush table 100
-
-    if [ "$ipset_protocal_version" == 6 ]; then
-        alias iptables='/usr/sbin/iptables'
-        ipset destroy CHINAIP 2>/dev/null
-        ipset destroy CHINAIPS 2>/dev/null
-        /usr/sbin/iptables-restore < $iptables_bak
-    else
-        alias iptables='/opt/sbin/iptables'
-        ipset -X CHINAIP 2>/dev/null
-        ipset -X CHINAIPS 2>/dev/null
-        /opt/sbin/iptables-restore < $iptables_bak
-    fi
-
-    chmod -x /opt/bin/update_iptables
-    chmod -x /opt/bin/patch_router
-
-    iptables -t nat -F SHADOWSOCKS_TCP 2>/dev/null          # flush
-    iptables -t nat -X SHADOWSOCKS_TCP 2>/dev/null          # --delete-chain
-    iptables -t mangle -F SHADOWSOCKS_UDP 2>/dev/null
-    iptables -t mangle -X SHADOWSOCKS_UDP 2>/dev/null
-    iptables -t mangle -F SHADOWSOCKS_MARK 2>/dev/null
-    iptables -t mangle -X SHADOWSOCKS_MARK 2>/dev/null
-
-    sed -i "s#conf-dir=/opt/etc/dnsmasq.d/,\*\.conf#\# &#" /etc/dnsmasq.conf
-    /opt/bin/restart_dnsmasq
-    echo 'Proxy is disabled.'
+if [ "$1" == 'disable' ]; then
+    /opt/bin/config_dnsmasq remove
+    /opt/bin/config_iptables remove
 else
-    echo 'Enable proxy ...'
-    chmod +x /opt/bin/update_iptables
-    chmod +x /opt/bin/patch_router && /opt/bin/patch_router
-    echo 'Proxy is enabled.'
+    /opt/bin/config_dnsmasq
+    /opt/bin/config_iptables
+    /opt/bin/switch_proxy
 fi
-
-# iptables -t nat -D PREROUTING -p tcp -j SHADOWSOCKS
