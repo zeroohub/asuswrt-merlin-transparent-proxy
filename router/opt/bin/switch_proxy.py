@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import re
 import os
 import json
 import base64
@@ -108,7 +109,6 @@ if __name__ == '__main__':
         num = input("choose a node: ")
         if isinstance(num, int) and num < len(nodes):
             conf = nodes[num][1]
-            apply_config(conf)
             try:
                 check_output('ipset -N CHINAIP hash:ip 2>&1', shell=True)
             except CalledProcessError as e:
@@ -117,12 +117,16 @@ if __name__ == '__main__':
                 else:
                     raise
             try:
-                check_output('ipset add CHINAIP {} 2>&1'.format(conf['server']), shell=True)
+                dig = check_output("dig +short {}".format(conf['server']), shell=True).strip()
+                if dig:
+                    whitelistip = check_output('ipset add CHINAIP {} 2>&1'.format(dig), shell=True)
             except CalledProcessError as e:
                 if "it's already added" in e.output:
                     pass
                 else:
                     raise
+
+            apply_config(conf)
             check_call('/opt/etc/init.d/S22shadowsocksr restart', shell=True)
             break
         else:
