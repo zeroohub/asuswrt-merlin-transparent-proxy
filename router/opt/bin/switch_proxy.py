@@ -52,6 +52,9 @@ def fromlink(link):
                     else:
                         params_dict[part[0]] = part[1]
 
+            params_dict['obfs_param'] = params_dict.pop('obfsparam', '')
+            params_dict['protocol_param'] = params_dict.pop('protoparam', '')
+
         datas = link.split(':')
         if len(datas) == 6:
             host = datas[0]
