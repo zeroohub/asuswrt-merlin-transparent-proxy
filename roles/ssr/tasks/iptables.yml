@@ -1,0 +1,31 @@
+---
+- name: setup script for update ip whitelist
+  template:
+    src: ssr_update_ip_whitelist.j2
+    dest: "{{SSR_UPDATE_IP_WHITELIST_FILE}}"
+    mode: 0755
+
+- name: config cron for update ip whitelist
+  cron:
+    name: "ssr_update_ip_whitelist"
+    minute: "0"
+    hour: "2"
+    job: "{{SSR_UPDATE_IP_WHITELIST_FILE}}"
+
+- name: update ip whitelist
+  command: '{{SSR_UPDATE_IP_WHITELIST_FILE}}'
+
+- name: setup script for config iptables
+  template:
+    src: ssr_config_iptables.j2
+    dest: "{{SSR_CONFIG_IPTABLES_FILE}}"
+    mode: 0755
+
+- name: setup bypass ip list
+  template:
+    src: ssr_bypass_ip.txt.j2
+    dest: "{{SSR_BYPASS_IP_FILE}}"
+    mode: 0644
+
+- name: config iptables
+  command: "{{SSR_CONFIG_IPTABLES_FILE}}"

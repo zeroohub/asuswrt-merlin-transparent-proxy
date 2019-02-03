@@ -1,0 +1,20 @@
+---
+
+- name: setup config file
+  template:
+    src: dnsmasq.conf.j2
+    dest: "{{DNSMASQ_CFG_FILE}}"
+
+- name: setup init.d service file
+  template:
+    src: S08dnsmasq.j2
+    dest: "{{DNSMASQ_INITD_FILE}}"
+    mode: 0755
+
+- name: setup extra rules for dnsmasq
+  template:
+    src: through_stubby.conf.j2
+    dest: "{{DNSMASQ_EXTRA_CFG_DIR}}/through_stubby.conf"
+
+- name: make sure dnsmasq restarted
+  command: "{{DNSMASQ_INITD_FILE}} restart"

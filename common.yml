@@ -1,9 +1,0 @@
----
-
-- name: Install atx app
-  strategy: free
-  hosts: all
-  gather_facts: True
-  become: true
-  roles:
-    - role: artpi

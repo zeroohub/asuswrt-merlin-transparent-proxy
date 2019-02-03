@@ -1,7 +1,0 @@
----
-
-- name: install standard set
-  hosts: all
-  gather_facts: no
-  roles:
-    - role: stubby

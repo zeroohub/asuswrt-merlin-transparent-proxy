@@ -1,3 +1,5 @@
 ---
-
-COMMON_INITD_DIR: /opt/etc/init.d
+COMMON_CFG_DIR: /opt/etc
+COMMON_INITD_DIR: "{{COMMON_CFG_DIR}}/init.d"
+COMMON_BIN_DIR: /opt/bin
+COMMON_TMP_DIR: /opt/tmp

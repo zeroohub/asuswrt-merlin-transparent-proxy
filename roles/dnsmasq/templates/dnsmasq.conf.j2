@@ -1,0 +1,28 @@
+pid-file={{ DNSMASQ_PID_FILE }}
+user=nobody
+bind-dynamic
+interface=br0
+interface=pptp*
+no-dhcp-interface=pptp*
+no-resolv
+servers-file=/tmp/resolv.dnsmasq
+no-poll
+no-negcache
+cache-size=1500
+min-port=4096
+bogus-priv
+domain-needed
+dhcp-range=lan,192.168.50.2,192.168.50.254,255.255.255.0,86400s
+dhcp-option=lan,3,192.168.50.1
+dhcp-option=lan,252,"\n"
+dhcp-authoritative
+interface=tun21
+interface=tun22
+addn-hosts=/etc/hosts.dnsmasq
+dhcp-host=34:13:E8:99:58:9F,192.168.50.69
+dhcp-name-match=set:wpad-ignore,wpad
+dhcp-ignore-names=tag:wpad-ignore
+log-queries
+log-async
+log-facility={{ DNSMASQ_LOG_FILE }}
+conf-dir={{ DNSMASQ_EXTRA_CFG_DIR }}/,*.conf

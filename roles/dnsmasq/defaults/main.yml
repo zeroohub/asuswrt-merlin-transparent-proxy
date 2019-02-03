@@ -1,0 +1,15 @@
+---
+
+DNSMASQ_LOG_NAME: dnsmasq.log
+DNSMASQ_LOG_FILE: "/opt/var/log/{{DNSMASQ_LOG_NAME}}"
+
+
+DNSMASQ_CFG_NAME: dnsmasq.conf
+DNSMASQ_CFG_FILE: "/etc/{{DNSMASQ_CFG_NAME}}"
+
+DNSMASQ_PID_FILE: "/var/run/dnsmasq.pid"
+
+DNSMASQ_INITD_NAME: S08dnsmasq
+DNSMASQ_INITD_FILE: "{{COMMON_INITD_DIR}}/{{DNSMASQ_INITD_NAME}}"
+
+DNSMASQ_EXTRA_CFG_DIR: /opt/etc/dnsmasq.d
