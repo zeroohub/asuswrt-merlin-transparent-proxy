@@ -1,0 +1,23 @@
+---
+
+- name: config swapfile
+  command: dd if=/dev/zero of=/tmp/mnt/sda1/swapfile bs=1024 count=1048576
+
+- name: chnage mode for swapfile
+  file:
+    name: /tmp/mnt/sda1/swapfile
+    state: present
+    mode: 0666
+
+- name: make swap
+  command: mkswap /tmp/mnt/sda1/swapfile
+
+- name: turn on swap
+  command: swapon /tmp/mnt/sda1/swapfile
+
+
+- name: setup post-mount
+  template:
+    src: post-mount.j2
+    dest: /jffs/scripts/post-mount
+    mode: 0755

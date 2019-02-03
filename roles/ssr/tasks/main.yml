@@ -1,0 +1,56 @@
+---
+- name: install shadowsocksr with related package
+  opkg:
+    name: "{{item}}"
+    state: present
+  loop: "{{SSR_PACKAGES}}"
+
+- name: setup config file with default node
+  template:
+    src: shadowsocksr.json.j2
+    dest: "{{SSR_CFG_FILE}}"
+    mode: 0644
+
+- name: setup init.d service file
+  template:
+    src: S22shadowsocksr.j2
+    dest: "{{SSR_INITD_FILE}}"
+    mode: 0755
+
+- name: create directory for update subscribes
+  file:
+    name: "{{SSR_SUBSCRIBES_DIR}}"
+    state: directory
+    mode: 0644
+
+- name: setup subscribes list file
+  template:
+    src: ssr_bypass_ip.txt.j2
+    dest: "{{SSR_SUBSCRIBES_LIST_FILE}}"
+    mode: 0644
+
+
+- name: setup script for update subscribes
+  template:
+    src: "ssr_update_subscribes.py.j2"
+    dest: "{{SSR_UPDATE_SUBSCRIBES_FILE}}"
+    mode: 0755
+
+- name: config cron for update subscribes
+  cron:
+    name: "ssr_update_subscribes"
+    minute: "0"
+    hour: "3"
+    job: "{{SSR_UPDATE_SUBSCRIBES_FILE}}"
+
+- name: setup script for switch node
+  template:
+    src: "ssr_switch_node.py.j2"
+    dest: "{{SSR_SWITCH_NODE_FILE}}"
+    mode: 0755
+
+- name: setup iptables
+  import_tasks: iptables.yml
+
+- name: ensure service restart
+  command: "{{SSR_INITD_FILE}} restart"
