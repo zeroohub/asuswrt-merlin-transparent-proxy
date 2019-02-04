@@ -1,2 +1,12 @@
 ---
 
+- name: make sure required jffs event files exist
+  template:
+    src: jffs_event.j2
+    dest: "{{item}}"
+    force: no
+    mode: 0777
+  loop:
+    - "{{JFFS_POST_MOUNT_FILE}}"
+    - "{{JFFS_WAN_START_FILE}}"
+    - "{{JFFS_DHCPC_EVENT_FILE}}"

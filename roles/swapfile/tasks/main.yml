@@ -23,8 +23,8 @@
 - name: make sure mount swapfile at startup
   blockinfile:
     name: "{{JFFS_POST_MOUNT_FILE}}"
-    marker_begin: "MOUNT SWAPFILE"
-    marker_end: "MOUNT SWAPFILE"
+    marker_begin: "MOUNT SWAPFILE START"
+    marker_end: "MOUNT SWAPFILE END"
     block: |
       if [ -f "{{SWAPFILE_FILE}}" ];then
           swapon {{SWAPFILE_FILE}}

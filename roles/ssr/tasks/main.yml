@@ -41,8 +41,6 @@
 - name: make sure cron worked after reboot
   lineinfile:
     line: 'cru a ssr_update_subscribes 0 3 0 0 0 {{SSR_UPDATE_SUBSCRIBES_FILE}}'
-    create: yes
-    mode: 0777
     path: "{{JFFS_WAN_START_FILE}}"
 
 - name: setup script for switch node
@@ -51,9 +49,8 @@
     dest: "{{SSR_SWITCH_NODE_FILE}}"
     mode: 0755
 
-#
-#- name: setup iptables
-#  import_tasks: iptables.yml
+- name: setup iptables
+  import_tasks: iptables.yml
 
 - name: ensure service restart
   command: "{{SSR_INITD_FILE}} restart"
