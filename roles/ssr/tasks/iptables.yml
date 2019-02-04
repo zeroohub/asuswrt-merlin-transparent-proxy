@@ -42,4 +42,7 @@
     path: "{{JFFS_WAN_START_FILE}}"
 
 - name: config iptables
-  command: "{{SSR_CONFIG_IPTABLES_FILE}} restore && {{SSR_CONFIG_IPTABLES_FILE}}"
+  command: "{{items}}"
+  loops:
+    - "{{SSR_CONFIG_IPTABLES_FILE}} restore"
+    - "{{SSR_CONFIG_IPTABLES_FILE}}"
