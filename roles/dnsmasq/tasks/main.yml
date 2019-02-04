@@ -11,6 +11,12 @@
     dest: "{{DNSMASQ_INITD_FILE}}"
     mode: 0755
 
+- name: make sure extra config dir exist
+  file:
+    name: "{{DNSMASQ_EXTRA_CFG_DIR}}"
+    state: directory
+    mode: 0644
+
 - name: setup extra rules for dnsmasq
   template:
     src: through_stubby.conf.j2
