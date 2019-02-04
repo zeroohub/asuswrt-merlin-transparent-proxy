@@ -1,0 +1,29 @@
+---
+
+- name: install standard set
+  hosts: all
+  gather_facts: no
+  vars:
+    STUBBY_DNS_PROVIDERS:
+      - address: 115.159.154.226
+        name: "dns.rubyfish.cn"
+      - address: 47.99.165.31
+        name: "dns.rubyfish.cn"
+      - address: 2606:4700:4700::1111
+        name: "cloudflare-dns.com"
+    SSR_DEFAULT_NODE:
+      obfs_param: "param"
+      protocol: "auth_aes128_md5"
+      obfs: "tls1.2_ticket_auth"
+      server: "server.cloud"
+      protocol_param: "*****"
+      server_port: 12331
+      password: "****"
+      method: "chacha20"
+    SSR_SUBSCRIBES:
+      - "http://somelink.ln"
+      - "https://anotherlink.ln"
+  roles:
+    - role: swapfile
+    - role: dnsmasq
+    - role: ssr
