@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from urlparse import urlparse
-import os
-from subprocess import check_output
+
+from subprocess import check_output, CalledProcessError
+
 
 def update():
     result = []
@@ -12,9 +13,12 @@ def update():
 
     for sub in subs:
         url = sub.strip()
-        output = check_output('curl -L {}'.format(url), shell=True)
-        with open('{{ SSR_SUBSCRIBES_DIR }}/{}'.format(urlparse(url).hostname), 'wb') as f:
-            f.write(output)
+        try:
+            output = check_output('curl -L {}'.format(url), shell=True)
+            with open('{{ SSR_SUBSCRIBES_DIR }}/{}'.format(urlparse(url).hostname), 'wb') as f:
+                f.write(output)
+        except CalledProcessError:
+            pass
 
     return result
 
