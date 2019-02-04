@@ -2,9 +2,9 @@
 
 - name: make sure required jffs event files exist
   template:
-    name: jffs_event.j2
-    force: no
+    src: jffs_event.j2
     dest: "{{item}}"
+    force: no
     mode: 0777
   loop:
     - "{{JFFS_POST_MOUNT_FILE}}"
