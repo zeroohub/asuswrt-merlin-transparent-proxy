@@ -44,6 +44,7 @@
     line: 'cru a 0 3 0 0 0 {{SSR_UPDATE_SUBSCRIBES_FILE}}'
     create: yes
     mode: 0777
+    path: "{{JFFS_WAN_START_FILE}}"
 
 - name: setup script for switch node
   template:

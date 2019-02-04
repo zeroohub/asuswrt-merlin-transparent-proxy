@@ -7,3 +7,4 @@ COMMON_TMP_DIR: "{{COMMON_ROOT_DIR}}//tmp"
 
 JFFS_SCRIPTS_DIR: "/jffs/scripts"
 JFFS_POST_MOUNT_FILE: "{{JFFS_SCRIPTS_DIR}}/post-mount"
+JFFS_WAN_START_FILE: "{{JFFS_SCRIPTS_DIR}}/wan-start"
