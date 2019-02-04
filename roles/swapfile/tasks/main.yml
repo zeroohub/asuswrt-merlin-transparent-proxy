@@ -1,0 +1,30 @@
+---
+
+- name: config swapfile
+  command: "dd if=/dev/zero of={{SWAPFILE_FILE}} bs=1024 count=524288"
+  args:
+    creates: "{{SWAPFILE_FILE}}"
+  register: swapfile
+
+- name: change mode for swapfile
+  file:
+    name: "{{SWAPFILE_FILE}}"
+    state: present
+    mode: 0666
+
+- name: make swap
+  command: "mkswap {{SWAPFILE_FILE}}"
+  when: swapfile is not None
+
+- name: turn on swap
+  command: "swapon {{SWAPFILE_FILE}}"
+
+- name: make sure mount swapfile at startup
+  blockinfile:
+    name: "{{SWAPFILE_FILE}}"
+    marker_begin: "MOUNT SWAPFILE"
+    marker_end: "MOUNT SWAPFILE"
+    block: |
+      if [ -f "{{SWAPFILE_FILE}}" ];then
+          swapon {{SWAPFILE_FILE}}
+      fi
