@@ -109,7 +109,7 @@ if __name__ == '__main__':
         if isinstance(num, int) and num < len(nodes):
             conf = nodes[num][1]
             try:
-                check_output('ipset -N CHINAIP hash:ip 2>&1', shell=True)
+                check_output('ipset -N {{ SSR_IPSET_NAME }} hash:ip 2>&1', shell=True)
             except CalledProcessError as e:
                 if 'set with the same name already exists' in e.output:
                     pass
@@ -118,7 +118,7 @@ if __name__ == '__main__':
             try:
                 dig = check_output("dig +short {}".format(conf['server']), shell=True).strip()
                 if dig:
-                    whitelistip = check_output('ipset add CHINAIP {} 2>&1'.format(dig), shell=True)
+                    whitelistip = check_output('ipset add {{ SSR_IPSET_NAME }} {} 2>&1'.format(dig), shell=True)
             except CalledProcessError as e:
                 if "it's already added" in e.output:
                     pass

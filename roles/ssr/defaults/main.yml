@@ -2,6 +2,7 @@
 SSR_PACKAGES:
   - shadowsocksr-libev
   - libsodium
+  - bind-dig
 
 SSR_PID_FILE: /var/run/shadowsocksr.pid
 SSR_CFG_FILE: /opt/etc/shadowsocksr.json
