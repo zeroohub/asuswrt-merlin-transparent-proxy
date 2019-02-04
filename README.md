@@ -38,7 +38,7 @@ To install everything on your Router:
 
 ## See Also:
 
-- [ruby fish dns](www.rubyfish.cn), the default upstream dns resolver for China
+- [ruby fish dns](https://www.rubyfish.cn/), the default upstream dns resolver for China
 
 ## TODOs
 
