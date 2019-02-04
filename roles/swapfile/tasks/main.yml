@@ -14,14 +14,14 @@
 
 - name: make swap
   command: "mkswap {{SWAPFILE_FILE}}"
-  when: swapfile_create_result.msg.changed == true
+  when: swapfile_create_result.changed == true
 
 - name: turn on swap
   command: "swapon {{SWAPFILE_FILE}}"
 
 - name: make sure mount swapfile at startup
   blockinfile:
-    name: "{{SWAPFILE_FILE}}"
+    name: "{{JFFS_POST_MOUNT_FILE}}"
     marker_begin: "MOUNT SWAPFILE"
     marker_end: "MOUNT SWAPFILE"
     block: |
