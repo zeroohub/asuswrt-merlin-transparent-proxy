@@ -9,6 +9,7 @@ Ansible scripts for setting up transparent proxy on **Asuswrt-Merlin** firmware.
   - subscribes
   - China ip whitelist mode
 - swapfile
+- Adblock with dnsmasq
 
 ## Quick Start
 
@@ -42,9 +43,9 @@ To install everything on your Router:
 
 ## TODOs
 
-- Adblock support
 - Add tags 
 - Able to rollback
+- Add more doc
 
 ## License
 

@@ -16,3 +16,6 @@
 
 - name: execute update
   command: "{{ADBLOCK_UPDATE_RULE_FILE}}"
+
+- name: restart dnsmasq
+  command: "{{DNSMASQ_INITD_FILE}} restart"
