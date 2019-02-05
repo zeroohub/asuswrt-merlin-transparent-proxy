@@ -1,0 +1,9 @@
+#!/bin/sh
+
+{% for rule in ADBLOCK_RULE_URLS %}
+wget --no-check-certificate -qO - {{ rule.url }} | grep ^\|\|[^\*]*\^$ | \
+    sed -e 's:||:address\=\/:' -e 's:\^:/127\.0\.0\.1:' > {{ DNSMASQ_EXTRA_CFG_DIR }}/{{ rule.name }}
+{% endfor %}
+
+
+{{DNSMASQ_INITD_FILE}} restart
