@@ -1,0 +1,12 @@
+---
+
+ADBLOCK_RULE_URLS:
+  - name: easylistchina.txt
+    url: https://easylist-downloads.adblockplus.org/easylistchina.txt
+
+  - name: easylist.txt
+    url: https://easylist-downloads.adblockplus.org/easylist.txt
+
+ADBLOCK_UPDATE_RULE_FILE: "{{COMMON_BIN_DIR}}/adblock_update_rules"
+
+ADBLOCK_UPDATE_RULES_CRON_CMD: "cru a adblock_update_rules 0 3 0 0 0 {{COMMON_BIN_DIR}}/adblock_update_rules"
