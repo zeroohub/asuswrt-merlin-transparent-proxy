@@ -6,3 +6,4 @@ wget --no-check-certificate -qO - {{ rule.url }} | grep ^\|\|[^\*]*\^$ | \
 {% endfor %}
 
 
+{{DNSMASQ_INITD_FILE}} restart
