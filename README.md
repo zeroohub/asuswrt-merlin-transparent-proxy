@@ -46,6 +46,7 @@ To install everything on your Router:
 - Add tags 
 - Able to rollback
 - Add more doc
+- Adblock use [diversion](https://diversion.ch/)
 
 ## License
 
