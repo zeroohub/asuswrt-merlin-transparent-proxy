@@ -22,5 +22,22 @@
     src: through_stubby.conf.j2
     dest: "{{DNSMASQ_EXTRA_CFG_DIR}}/through_stubby.conf"
 
+- name: setup script for update whitelist
+  template:
+    src: dnsmsq_update_whitelist.py.j2
+    dest: "{{DNSMASQ_UPDATE_WHITELIST_FILE}}"
+    mode: 0755
+
+- name: add cron for update whitelist
+  command: "cru a dnsmasq_update_whitelist 0 5 * * * {{DNSMASQ_UPDATE_WHITELIST_FILE}}"
+
+- name: make sure cron works after reboot
+  lineinfile:
+    line: "cru a dnsmasq_update_whitelist 0 5 * * * {{DNSMASQ_UPDATE_WHITELIST_FILE}}"
+    path: "{{JFFS_WAN_START_FILE}}"
+
+- name: update whitelist
+  command: "{{DNSMASQ_UPDATE_WHITELIST_FILE}}"
+
 - name: make sure dnsmasq restarted
   command: "{{DNSMASQ_INITD_FILE}} restart"

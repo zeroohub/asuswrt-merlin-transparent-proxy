@@ -36,11 +36,11 @@
     mode: 0755
 
 - name: config cron for update subscribes
-  command: 'cru a ssr_update_subscribes 0 3 0 0 0 {{SSR_UPDATE_SUBSCRIBES_FILE}}'
+  command: 'cru a ssr_update_subscribes 0 3 * * * {{SSR_UPDATE_SUBSCRIBES_FILE}}'
 
 - name: make sure cron worked after reboot
   lineinfile:
-    line: 'cru a ssr_update_subscribes 0 3 0 0 0 {{SSR_UPDATE_SUBSCRIBES_FILE}}'
+    line: 'cru a ssr_update_subscribes 0 3 * * * {{SSR_UPDATE_SUBSCRIBES_FILE}}'
     path: "{{JFFS_WAN_START_FILE}}"
 
 - name: setup script for switch node

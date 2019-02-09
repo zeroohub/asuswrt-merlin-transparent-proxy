@@ -6,11 +6,11 @@
     mode: 0755
 
 - name: config cron for update ip whitelist
-  command: "cru a ssr_update_ip_whitelist 0 2 0 0 0 {{SSR_UPDATE_IP_WHITELIST_FILE}}"
+  command: "cru a ssr_update_ip_whitelist 0 2 * * * {{SSR_UPDATE_IP_WHITELIST_FILE}}"
 
 - name: make sure cron worked after reboot
   lineinfile:
-    line: 'cru a ssr_update_ip_whitelist 0 2 0 0 0 {{SSR_UPDATE_IP_WHITELIST_FILE}}'
+    line: 'cru a ssr_update_ip_whitelist 0 2 * * * {{SSR_UPDATE_IP_WHITELIST_FILE}}'
     path: "{{JFFS_WAN_START_FILE}}"
 
 - name: update ip whitelist
@@ -34,15 +34,15 @@
     path: "{{JFFS_DHCPC_EVENT_FILE}}"
 
 - name: config cron for config iptables
-  command: "cru a ssr_config_iptables 0 4 0 0 0 {{SSR_CONFIG_IPTABLES_FILE}} restore && {{SSR_CONFIG_IPTABLES_FILE}}"
+  command: "cru a ssr_config_iptables 0 4 * * * {{SSR_CONFIG_IPTABLES_FILE}} restore && {{SSR_CONFIG_IPTABLES_FILE}}"
 
 - name: make sure cron worked after reboot
   lineinfile:
-    line: 'cru a ssr_config_iptables 0 4 0 0 0 {{SSR_CONFIG_IPTABLES_FILE}} restore && {{SSR_CONFIG_IPTABLES_FILE}}'
+    line: 'cru a ssr_config_iptables 0 4 * * * {{SSR_CONFIG_IPTABLES_FILE}} restore && {{SSR_CONFIG_IPTABLES_FILE}}'
     path: "{{JFFS_WAN_START_FILE}}"
 
 - name: config iptables
-  command: "{{items}}"
-  loops:
+  command: "{{item}}"
+  loop:
     - "{{SSR_CONFIG_IPTABLES_FILE}} restore"
     - "{{SSR_CONFIG_IPTABLES_FILE}}"
