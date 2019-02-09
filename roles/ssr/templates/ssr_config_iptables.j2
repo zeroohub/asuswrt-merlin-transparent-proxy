@@ -8,14 +8,14 @@ if [ "$1" == 'restore' ]; then
 
     ip route flush table 100
 
+    # delete related rules
+    iptables -t nat -D PREROUTING -p tcp -j {{ SSR_IPTABLES_RULE_PREFIX }}TCP
+    iptables -t nat -D OUTPUT -p tcp -j {{ SSR_IPTABLES_RULE_PREFIX }}TCP
+
     {% for suffix in ['TCP'] %}
     iptables -t nat -F {{ SSR_IPTABLES_RULE_PREFIX }}{{ suffix }}          # flush
     iptables -t nat -X {{ SSR_IPTABLES_RULE_PREFIX }}{{ suffix }}         # --delete-chain
     {% endfor %}
-
-    # delete related rules
-    iptables -t nat -D PREROUTING -p tcp -j {{ SSR_IPTABLES_RULE_PREFIX }}TCP
-    iptables -t nat -D OUTPUT -p tcp -j {{ SSR_IPTABLES_RULE_PREFIX }}TCP
 
 
     if [ "$ipset_protocal_version" == 6 ]; then
