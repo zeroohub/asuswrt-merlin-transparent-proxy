@@ -9,4 +9,4 @@ ADBLOCK_RULE_URLS:
 
 ADBLOCK_UPDATE_RULE_FILE: "{{COMMON_BIN_DIR}}/adblock_update_rules"
 
-ADBLOCK_UPDATE_RULES_CRON_CMD: "cru a adblock_update_rules 0 3 0 0 0 {{COMMON_BIN_DIR}}/adblock_update_rules"
+ADBLOCK_UPDATE_RULES_CRON_CMD: "cru a adblock_update_rules 0 3 * * * {{COMMON_BIN_DIR}}/adblock_update_rules"

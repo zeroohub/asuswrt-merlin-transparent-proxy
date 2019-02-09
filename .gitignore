@@ -13,3 +13,6 @@ cmake-build-release/
 .idea
 
 *.retry
+my-*
+
+.autoenv*
