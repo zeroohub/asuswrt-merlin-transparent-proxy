@@ -5,9 +5,9 @@
   gather_facts: no
   vars:
     STUBBY_DNS_PROVIDERS:
-      - address: 115.159.154.226
+      - address: 118.89.110.78
         name: "dns.rubyfish.cn"
-      - address: 47.99.165.31
+      - address: 47.96.179.163
         name: "dns.rubyfish.cn"
       - address: 2606:4700:4700::1111
         name: "cloudflare-dns.com"

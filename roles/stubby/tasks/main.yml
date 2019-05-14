@@ -9,13 +9,13 @@
 - name: setup yaml config file
   template:
     src: stubby.yml.j2
-    dest: "{{STUBBY_CFG_FILE}}"
+    dest: "{{ STUBBY_CFG_FILE }}"
 
 - name: setup init.d service file
   template:
     src: S09stubby.j2
-    dest: "{{STUBBY_INITD_FILE}}"
+    dest: "{{ STUBBY_INITD_FILE }}"
     mode: 0755
 
 - name: ensure stubby restart
-  command: "{{STUBBY_INITD_FILE}} restart"
+  command: "{{ STUBBY_INITD_FILE }} restart"

@@ -5,7 +5,7 @@ DNSMASQ_LOG_FILE: "/opt/var/log/{{DNSMASQ_LOG_NAME}}"
 
 
 DNSMASQ_CFG_NAME: dnsmasq.conf
-DNSMASQ_CFG_FILE: "/etc/{{DNSMASQ_CFG_NAME}}"
+DNSMASQ_CFG_FILE: "/opt/etc/{{DNSMASQ_CFG_NAME}}"
 
 DNSMASQ_PID_FILE: "/var/run/dnsmasq.pid"
 
