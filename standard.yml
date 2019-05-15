@@ -9,8 +9,10 @@
         name: "dns.rubyfish.cn"
       - address: 47.96.179.163
         name: "dns.rubyfish.cn"
-      - address: 2606:4700:4700::1111
-        name: "cloudflare-dns.com"
+      - address: 176.103.130.130
+        name: "dns.adguard.com"
+      - address: 176.103.130.131
+        name: "dns.adguard.com"
     SSR_DEFAULT_NODE:
       obfs_param: "param"
       protocol: "auth_aes128_md5"

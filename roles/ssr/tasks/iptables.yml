@@ -34,11 +34,11 @@
     path: "{{JFFS_DHCPC_EVENT_FILE}}"
 
 - name: config cron for config iptables
-  command: 'cru a ssr_config_iptables "0 4 * * * {{SSR_CONFIG_IPTABLES_FILE}} restore && {{SSR_CONFIG_IPTABLES_FILE}}"'
+  command: 'cru a ssr_config_iptables "0 4 * * 0 {{SSR_CONFIG_IPTABLES_FILE}} restore && {{SSR_CONFIG_IPTABLES_FILE}}"'
 
 - name: make sure cron worked after reboot
   lineinfile:
-    line: 'cru a ssr_config_iptables "0 4 * * * {{SSR_CONFIG_IPTABLES_FILE}} restore && {{SSR_CONFIG_IPTABLES_FILE}}"'
+    line: 'cru a ssr_config_iptables "0 4 * * 0 {{SSR_CONFIG_IPTABLES_FILE}} restore && {{SSR_CONFIG_IPTABLES_FILE}}"'
     path: "{{JFFS_WAN_START_FILE}}"
 
 - name: config iptables
