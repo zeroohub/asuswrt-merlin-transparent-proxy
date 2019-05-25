@@ -111,7 +111,7 @@ if __name__ == '__main__':
         num = input("choose a node: ")
         if isinstance(num, int) and num < len(nodes):
             conf = nodes[num][1]
-            check_output('ipset create -! {{ COMMON_IPSET_LOCAL_NAME }} hash:ip', shell=True)
+            check_output('ipset create -! {{ COMMON_IPSET_LOCAL_NAME }} hash:net', shell=True)
             dig = check_output("dig +short {}".format(conf['server']), shell=True).strip()
             if dig:
                 whitelistip = check_output('ipset add -! {{ COMMON_IPSET_LOCAL_NAME }} {}'.format(dig), shell=True)
