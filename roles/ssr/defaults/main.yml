@@ -5,27 +5,19 @@ SSR_PACKAGES:
   - bind-dig
 
 SSR_PID_FILE: /var/run/shadowsocksr.pid
-SSR_CFG_FILE: /opt/etc/shadowsocksr.json
-SSR_INITD_FILE: "{{COMMON_INITD_DIR}}/S22shadowsocksr"
+SSR_CFG_DIR: /opt/etc/shadowsocksr
+SSR_CFG_FILE: "{{ SSR_CFG_DIR }}/shadowsocksr.json"
+SSR_INITD_FILE: "{{ COMMON_INITD_DIR }}/S22shadowsocksr"
 SSR_SUBSCRIBES: []
-SSR_SUBSCRIBES_DIR: /opt/etc/ssr_subscribes
-SSR_SUBSCRIBES_LIST_FILE: /opt/etc/ssr_subscribes.txt
+SSR_SUBSCRIBES_DIR: "{{ SSR_CFG_DIR }}/subscribes"
+SSR_SUBSCRIBES_LIST_FILE: "{{ SSR_CFG_DIR }}/subscribes.txt"
 SSR_DEFAULT_NODE: null
 SSR_UPDATE_SUBSCRIBES_FILE: "{{COMMON_BIN_DIR}}/ssr_update_subscribes"
 SSR_SWITCH_NODE_FILE: "{{COMMON_BIN_DIR}}/ssr_switch_node"
 SSR_PORT: 1080
-SSR_UPDATE_IP_WHITELIST_FILE: "{{COMMON_BIN_DIR}}/ssr_update_ip_whitelist"
-SSR_CONFIG_IPTABLES_FILE: "{{COMMON_BIN_DIR}}/ssr_config_iptables"
-SSR_BYPASS_IP:
-  - 202.12.29.205 # ftp.apnic.net
-  - 81.4.123.217 # entware
-  - 151.101.76.133 # raw.githubusercontent.com
-  - 151.101.40.133 # raw.githubusercontent.com
-SSR_BYPASS_IP_FILE: "{{COMMON_CFG_DIR}}/ssr_bypass_ip.txt"
-SSR_IPTABLES_BACKUP_FILE: "{{COMMON_TMP_DIR}}/iptables_rules.backup"
-SSR_IPTABLES_RULE_PREFIX: 'SSR'
-SSR_IPSET_NAME: "BYPASS_SSR_IP"
 
 SSR_CFG:
-  local_port: "{{SSR_PORT}}"
+  local_port: "{{ SSR_PORT }}"
   local_address: "0.0.0.0"
+
+SSR_IPSET_NAME: LOCAL_IPS

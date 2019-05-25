@@ -1,0 +1,52 @@
+---
+
+- name: create config directory
+  file:
+    name: "{{ IPTABLES_CFG_DIR }}"
+    state: directory
+    mode: 0644
+
+- name: setup script for update ip whitelist
+  template:
+    src: ipset_update_whitelist.py.j2
+    dest: "{{ IPSET_UPDATE_WHITELIST_FILE }}"
+    mode: 0755
+
+- name: setup bypass ip list
+  template:
+    src: local_ips.txt.j2
+    dest: "{{ IPSET_LOCAL_IPS_FILE }}"
+    mode: 0644
+
+- name: config cron for update ip whitelist
+  command: 'cru a ipset_update_whitelist "0 2 * * * {{ IPSET_UPDATE_WHITELIST_FILE }}"'
+
+- name: make sure cron worked after reboot
+  lineinfile:
+    line: 'cru a ipset_update_whitelist "0 2 * * * {{ IPSET_UPDATE_WHITELIST_FILE }}"'
+    path: "{{ JFFS_WAN_START_FILE }}"
+
+- name: update ip whitelist
+  command: '{{ IPSET_UPDATE_WHITELIST_FILE }}'
+
+- name: setup script for iptables
+  template:
+    src: iptables_setup_redirect.py
+    dest: "{{ IPTABLES_SETUP_REDIRECT_FILE }}"
+    mode: 0755
+
+- name: setup reconfigure iptables when dhcp changed (this will erease custom iptables)
+  lineinfile:
+    line: '{{ IPTABLES_SETUP_REDIRECT_FILE }}'
+    path: "{{ JFFS_DHCPC_EVENT_FILE }}"
+
+- name: config cron for config iptables
+  command: 'cru a iptables_setup_redirect "0 4 * * 0 {{ IPTABLES_SETUP_REDIRECT_FILE }}"'
+
+- name: make sure cron worked after reboot
+  lineinfile:
+    line: 'cru a iptables_setup_redirect "0 4 * * 0 {{ IPTABLES_SETUP_REDIRECT_FILE }}"'
+    path: "{{ JFFS_WAN_START_FILE }}"
+
+- name: config iptables
+  command: "{{ IPTABLES_SETUP_REDIRECT_FILE }}"

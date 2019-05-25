@@ -29,11 +29,11 @@
     mode: 0755
 
 - name: add cron for update whitelist
-  command: 'cru a dnsmasq_update_whitelist 0 5 * * * "{{DNSMASQ_UPDATE_WHITELIST_FILE}}"'
+  command: 'cru a dnsmasq_update_whitelist "0 5 * * 0 {{DNSMASQ_UPDATE_WHITELIST_FILE}}"'
 
 - name: make sure cron works after reboot
   lineinfile:
-    line: 'cru a dnsmasq_update_whitelist "0 5 * * * {{DNSMASQ_UPDATE_WHITELIST_FILE}}"'
+    line: 'cru a dnsmasq_update_whitelist "0 5 * * 0 {{DNSMASQ_UPDATE_WHITELIST_FILE}}"'
     path: "{{JFFS_WAN_START_FILE}}"
 
 - name: update whitelist

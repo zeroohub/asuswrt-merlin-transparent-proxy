@@ -15,11 +15,11 @@ DNSMASQ_INITD_FILE: "{{COMMON_INITD_DIR}}/{{DNSMASQ_INITD_NAME}}"
 DNSMASQ_EXTRA_CFG_DIR: /opt/etc/dnsmasq.d
 
 DNSMASQ_WHITELIST_URLS:
-  - name: apple-china
+  - name: apple_china
     url: "https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf"
-  - name: google-china
+  - name: google_china
     url: "https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf"
-  - name: local-china
+  - name: local_china
     url: "https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf"
 
 DNSMASQ_UPDATE_WHITELIST_FILE: "{{COMMON_BIN_DIR}}/dnsmasq_update_whitelist"
