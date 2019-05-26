@@ -23,9 +23,11 @@ def run(cmd):
 
 def is_already_setup():
     try:
-        count = call('iptables -t nat -L {} | wc -l'.format(RULE_NAME))
+        count = int(call('iptables -t nat -L {} | wc -l'.format(RULE_NAME)))
         if count == 2:
             run('iptables -t nat -X ' + RULE_NAME)
+            return False
+        if count == 0:
             return False
         return True
     except CalledProcessError:
@@ -41,6 +43,7 @@ def get_ssr_port():
 def create_rule():
     command = "iptables -t nat -A {} -p tcp ".format(RULE_NAME)
     run('iptables -t nat -N ' + RULE_NAME)
+    run(command + "--dport 853 -j RETURN")
     run(command + "-m set --match-set {{ COMMON_IPSET_LOCAL_NAME }} dst -j RETURN")
     run(command + "-m set --match-set {{ COMMON_IPSET_CHINA_NAME }} dst -j RETURN")
     run(command + "-j REDIRECT --to-ports {}".format(get_ssr_port()))

@@ -5,6 +5,15 @@
     state: present
   loop: "{{ SSR_PACKAGES }}"
 
+- name: create config directory
+  file:
+    name: "{{ item }}"
+    state: directory
+    mode: 0644
+  loop:
+    - "{{ SSR_CFG_DIR }}"
+    - "{{ SSR_SUBSCRIBES_DIR }}"
+
 - name: setup config file with default node
   template:
     src: shadowsocksr.json.j2
@@ -16,16 +25,6 @@
     src: S22shadowsocksr.j2
     dest: "{{ SSR_INITD_FILE }}"
     mode: 0755
-
-
-- name: create config directory
-  file:
-    name: "{{ item }}"
-    state: directory
-    mode: 0644
-  loop:
-    - "{{ SSR_CFG_DIR }}"
-    - "{{ SSR_SUBSCRIBES_DIR }}"
 
 - name: setup subscribes list file
   template:
