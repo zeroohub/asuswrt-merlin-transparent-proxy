@@ -114,6 +114,7 @@ if __name__ == '__main__':
             check_output('ipset create -! {{ COMMON_IPSET_LOCAL_NAME }} hash:net', shell=True)
             dig = check_output("dig +short {}".format(conf['server']), shell=True).strip()
             if dig:
+                dig = dig.split('\n')[-1]
                 whitelistip = check_output('ipset add -! {{ COMMON_IPSET_LOCAL_NAME }} {}'.format(dig), shell=True)
             apply_config(conf)
             check_call('{{ SSR_INITD_FILE }} restart', shell=True)
