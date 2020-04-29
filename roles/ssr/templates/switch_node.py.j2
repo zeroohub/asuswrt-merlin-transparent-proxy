@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import os
+import json
+import base64
+from subprocess import check_call, check_output
+
+
+def b64decode(data):
+    missing_padding = len(data) % 4
+    if missing_padding:
+        data += '=' * (4 - missing_padding)
+    return base64.urlsafe_b64decode(data).decode()
+
+
+def fromlink(link):
+    link = b64decode(link[6:])
+    params_dict = {}
+    if '/' in link:
+        datas = link.split('/', 1)
+        link = datas[0]
+        param = datas[1]
+        pos = param.find('?')
+        if pos >= 0:
+            param = param[pos + 1:]
+        params = param.split('&')
+        for param in params:
+            part = param.split('=', 1)
+            if part[0] in ['obfsparam', 'protoparam', 'remarks', 'group']:
+                params_dict[part[0]] = b64decode(part[1])
+            else:
+                params_dict[part[0]] = part[1]
+
+        params_dict['obfs_param'] = params_dict.pop('obfsparam', '')
+        params_dict['protocol_param'] = params_dict.pop('protoparam', '')
+
+    datas = link.split(':')
+    if len(datas) == 6:
+        host = datas[0]
+        port = int(datas[1])
+        protocol = datas[2]
+        method = datas[3]
+        obfs = datas[4]
+        passwd = b64decode(datas[5])
+
+        result = {'server': host, 'server_port': port,
+                  'password': passwd, 'protocol': protocol,
+                  'method': method, 'obfs': obfs}
+        result.update(params_dict)
+        output = json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))
+        return output
+
+
+def parse_data(data):
+    links = b64decode(data).split()
+    config = [eval(fromlink(l)) for l in links]
+    return config
+
+
+def get_nodes():
+    result = []
+    base_path = '{{ SSR_SUBSCRIBES_DIR }}'
+    for fn in os.listdir(base_path):
+        with open(os.path.join(base_path, fn), 'rb') as f:
+            result += parse_data(f.read())
+    return result
+
+
+def apply_config(socks_file, conf):
+    with open(socks_file, 'r') as f:
+        old_conf = json.loads(f.read())
+    with open(socks_file, 'w') as f:
+        old_conf.update(conf)
+        f.write(json.dumps(old_conf, indent=4))
+
+
+if __name__ == '__main__':
+    nodes = get_nodes()
+    nodes = sorted([(f"{n.pop('group')}-{n.pop('remarks')}", n) for n in nodes],
+                   key=lambda x: x[0])
+    nodes_str = ""
+    for idx, (name, node) in enumerate(nodes):
+        nodes_str += f"{idx}) {name}\n"
+    print(nodes_str)
+    try:
+        num = int(input("choose a node: "))
+        conf = nodes[num][1]
+    except (ValueError, IndexError):
+        print('invalid input')
+    else:
+        check_output('ipset create -! {{ COMMON_IPSET_WHITELIST_NAME }} hash:net', shell=True)
+        dig = check_output(f"dig +short {conf['server']}", shell=True).strip().decode()
+        if dig:
+            dig = dig.split('\n')[-1]
+            check_output(f'ipset add -! {{ COMMON_IPSET_WHITELIST_NAME }} {dig}', shell=True)
+        apply_config('{{ SSR_LOCAL_CFG_FILE }}', conf)
+        apply_config('{{ SSR_REDIR_CFG_FILE }}', conf)
+        check_call('{{ SSR_LOCAL_INITD_FILE }} restart', shell=True)
+        check_call('{{ SSR_REDIR_INITD_FILE }} restart', shell=True)

@@ -1,0 +1,16 @@
+---
+
+- name: copy bin file
+  copy:
+    src: dns2socks
+    dest: "{{ D2S_BIN_FILE }}"
+    mode: 0755
+
+- name: setup control file
+  template:
+    src: restart_dns2socks.j2
+    dest: "{{ D2S_CONTROL_FILE }}"
+    mode: 0755
+
+- name: make sure d2s restarted
+  command: "{{ D2S_CONTROL_FILE }}"

@@ -5,19 +5,24 @@ SSR_PACKAGES:
   - bind-dig
 
 SSR_PID_FILE: /var/run/shadowsocksr.pid
-SSR_CFG_DIR: /opt/etc/shadowsocksr
-SSR_CFG_FILE: "{{ SSR_CFG_DIR }}/shadowsocksr.json"
-SSR_INITD_FILE: "{{ COMMON_INITD_DIR }}/S22shadowsocksr"
+SSR_CFG_DIR: /opt/home/ssr/etc/shadowsocksr
+SSR_REDIR_CFG_FILE: "{{ SSR_CFG_DIR }}/redir.json"
+SSR_LOCAL_CFG_FILE: "{{ SSR_CFG_DIR }}/local.json"
+SSR_REDIR_INITD_FILE: "{{ COMMON_INITD_DIR }}/S22ssredir"
+SSR_LOCAL_INITD_FILE: "{{ COMMON_INITD_DIR }}/S21sslocal"
 SSR_SUBSCRIBES: []
 SSR_SUBSCRIBES_DIR: "{{ SSR_CFG_DIR }}/subscribes"
 SSR_SUBSCRIBES_LIST_FILE: "{{ SSR_CFG_DIR }}/subscribes.txt"
 SSR_DEFAULT_NODE: null
-SSR_UPDATE_SUBSCRIBES_FILE: "{{COMMON_BIN_DIR}}/ssr_update_subscribes"
-SSR_SWITCH_NODE_FILE: "{{COMMON_BIN_DIR}}/ssr_switch_node"
-SSR_PORT: 1080
+SSR_UPDATE_SUBSCRIBES_FILE: "{{COMMON_BIN_DIR}}/update_subscribes"
+SSR_SWITCH_NODE_FILE: "{{COMMON_BIN_DIR}}/switch_node"
+SSR_REDIR_PORT: 1080
+SSR_LOCAL_PORT: 1081
 
-SSR_CFG:
-  local_port: "{{ SSR_PORT }}"
+SSR_REDIR_CFG:
+  local_port: "{{ SSR_REDIR_PORT }}"
   local_address: "0.0.0.0"
 
-SSR_IPSET_NAME: LOCAL_IPS
+SSR_LOCAL_CFG:
+  local_port: "{{ SSR_LOCAL_PORT }}"
+  local_address: "0.0.0.0"

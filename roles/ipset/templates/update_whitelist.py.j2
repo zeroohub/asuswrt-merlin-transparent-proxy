@@ -5,38 +5,24 @@ import math
 import json
 
 
-def to_bytes(s):
-    if bytes != str:
-        if type(s) == str:
-            return s.encode('utf-8')
-    return s
-
-
-def to_str(s):
-    if bytes != str:
-        if type(s) == bytes:
-            return s.decode('utf-8')
-    return s
-
-
 def call(cmd):
-    return to_str(check_output(cmd, shell=True)).strip()
+    return check_output(cmd, shell=True).decode().strip()
 
 
 def create_ipset(name):
-    call("ipset create -! {} hash:net".format(name))  # make sure sets exist, ignore error
+    call(f"ipset create -! {name} hash:net")  # make sure sets exist, ignore error
 
 
 def add_to_ipset(name, ip):
-    call("ipset add -! {} {}".format(name, ip))
+    call(f"ipset add -! {name} {ip}")
 
 
 def del_from_ipset(name, ip):
-    call("ipset del -! {} {}".format(name, ip))
+    call(f"ipset del -! {name} {ip}")
 
 
 def list_ipset(name):
-    return call("ipset list {}".format(name)).split('\n')[8:]
+    return call(f"ipset list {name}").split('\n')[8:]
 
 
 def update_china_ips():
@@ -44,7 +30,7 @@ def update_china_ips():
     create_ipset(ipset_name)
     result = call("curl -L 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest'")
     china_ips = [ip.split('|')[3:5] for ip in result.split('\n') if 'CN|ipv4' in ip]
-    china_nets = {"{}/{}".format(ip, 32 - int(math.log(float(num), 2))) for ip, num in china_ips}
+    china_nets = {f"{ip}/{32 - int(math.log(float(num), 2))}" for ip, num in china_ips}
     existing_nets = set(list_ipset(ipset_name))
     for net in existing_nets:
         if net not in china_nets:
@@ -54,10 +40,10 @@ def update_china_ips():
             add_to_ipset(ipset_name, net)
 
 
-def update_local_ips():
-    ipset_name = "{{ COMMON_IPSET_LOCAL_NAME }}"
+def update_whitelist_ips():
+    ipset_name = "{{ COMMON_IPSET_WHITELIST_NAME }}"
     create_ipset(ipset_name)
-    with open('{{ IPSET_LOCAL_IPS_FILE }}', "r") as f:
+    with open('{{ IPSET_WHITELIST_FILE }}', "r") as f:
         local_nets = set([line.strip() for line in f.readlines()])
 
     existing_nets = set(list_ipset(ipset_name))
@@ -68,11 +54,11 @@ def update_local_ips():
         if net not in existing_nets:
             add_to_ipset(ipset_name, net)
 
-    with open('{{ SSR_CFG_FILE }}') as f:
+    with open('{{ SSR_REDIR_CFG_FILE }}') as f:
         ssr_cfg = json.loads(f.read())
-    add_to_ipset(ipset_name, "-r {}".format(ssr_cfg['server']))
+    add_to_ipset(ipset_name, f"-r {ssr_cfg['server']}")
 
 
 if __name__ == '__main__':
     update_china_ips()
-    update_local_ips()
+    update_whitelist_ips()

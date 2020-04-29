@@ -1,4 +1,4 @@
 ---
 dependencies:
-  - common
-  - stubby
+  - common_vars
+  - dns2socks

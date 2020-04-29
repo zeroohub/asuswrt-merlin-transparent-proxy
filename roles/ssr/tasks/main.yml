@@ -16,15 +16,21 @@
 
 - name: setup config file with default node
   template:
-    src: shadowsocksr.json.j2
-    dest: "{{ SSR_CFG_FILE }}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     mode: 0644
+  loop:
+    - {src: "sslocal.json.j2", dest: "{{ SSR_LOCAL_CFG_FILE }}"}
+    - {src: "ssredir.json.j2", dest: "{{ SSR_REDIR_CFG_FILE }}"}
 
 - name: setup init.d service file
   template:
-    src: S22shadowsocksr.j2
-    dest: "{{ SSR_INITD_FILE }}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     mode: 0755
+  loop:
+    - {src: "S21sslocal.j2", dest: "{{ SSR_LOCAL_INITD_FILE }}"}
+    - {src: "S22ssredir.j2", dest: "{{ SSR_REDIR_INITD_FILE }}"}
 
 - name: setup subscribes list file
   template:
@@ -34,7 +40,7 @@
 
 - name: setup script for update subscribes
   template:
-    src: "ssr_update_subscribes.py.j2"
+    src: "update_subscribes.py.j2"
     dest: "{{ SSR_UPDATE_SUBSCRIBES_FILE }}"
     mode: 0755
 
@@ -48,9 +54,12 @@
 
 - name: setup script for switch node
   template:
-    src: "ssr_switch_node.py.j2"
+    src: "switch_node.py.j2"
     dest: "{{ SSR_SWITCH_NODE_FILE }}"
     mode: 0755
 
 - name: ensure service restart
-  command: "{{ SSR_INITD_FILE }} restart"
+  command: "{{ item }} restart"
+  loop:
+    - "{{ SSR_LOCAL_INITD_FILE }}"
+    - "{{ SSR_REDIR_INITD_FILE }}"

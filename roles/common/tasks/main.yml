@@ -7,6 +7,18 @@
     force: no
     mode: 0777
   loop:
-    - "{{JFFS_POST_MOUNT_FILE}}"
-    - "{{JFFS_WAN_START_FILE}}"
-    - "{{JFFS_DHCPC_EVENT_FILE}}"
+    - "{{ JFFS_POST_MOUNT_FILE }}"
+    - "{{ JFFS_WAN_START_FILE }}"
+    - "{{ JFFS_DHCPC_EVENT_FILE }}"
+
+- name: create config directory
+  file:
+    name: "{{ item }}"
+    state: directory
+    mode: 0644
+  loop:
+    - "{{ COMMON_ROOT_DIR }}"
+    - "{{ COMMON_CFG_DIR }}"
+    - "{{ COMMON_INITD_DIR }}"
+    - "{{ COMMON_BIN_DIR }}"
+    - "{{ COMMON_TMP_DIR }}"

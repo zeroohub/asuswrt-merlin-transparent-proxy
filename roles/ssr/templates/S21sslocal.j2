@@ -1,8 +1,8 @@
 #!/bin/sh
 
 ENABLED=yes
-PROCS=ssr-redir
-ARGS="-c {{ SSR_CFG_FILE }} -f {{ SSR_PID_FILE }}"
+PROCS=ssr-local
+ARGS="-c {{ SSR_LOCAL_CFG_FILE }} -f {{ SSR_PID_FILE }}"
 PREARGS=""
 DESC=$PROCS
 PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
