@@ -25,7 +25,7 @@ IPSET_WHITELIST_IPS:
   - 255.255.255.255
   - 202.12.29.205 # ftp.apnic.net
   - 81.4.123.217 # entware
-  - 151.101.76.133 # raw.githubusercontent.com
-  - 151.101.40.133 # raw.githubusercontent.com
+#  - 151.101.76.133 # raw.githubusercontent.com
+#  - 151.101.40.133 # raw.githubusercontent.com
 
 IPSET_WHITELIST_FILE: "{{ IPSET_CFG_DIR }}/whitelist.txt"
