@@ -8,13 +8,13 @@
       obfs_param: "param"
       protocol: "auth_aes128_md5"
       obfs: "tls1.2_ticket_auth"
-      server: "server.cloud"
+      server: some.cloud
       protocol_param: "*****"
       server_port: 12331
       password: "****"
       method: "chacha20"
     SSR_SUBSCRIBES:
-      - "any"
+      - "https://some.cloud"
   roles:
     - common
     - ssr
