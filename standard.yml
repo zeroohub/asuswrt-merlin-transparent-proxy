@@ -7,18 +7,19 @@
     SSR_DEFAULT_NODE:
       obfs_param: "param"
       protocol: "auth_aes128_md5"
-      obfs: "tls1.2_ticket_auth"
-      server: some.cloud
+      obfs: tls1.2_ticket_auth
+      server: no4429298645.internetworld.cloud
       protocol_param: "*****"
       server_port: 12331
       password: "****"
       method: "chacha20"
     SSR_SUBSCRIBES:
-      - "https://some.cloud"
+      - https://sub.ssr.ac/link/4uhzuUjn9Q6376K5?mu=1
   roles:
-    - common
-    - ssr
-    - ipset
-    - iptables
-    - dns2socks
-    - dnsmasq
+#    - common
+#    - ssr
+#    - ipset
+#    - iptables
+#    - dns2socks
+#    - dnsmasq
+    - haveged

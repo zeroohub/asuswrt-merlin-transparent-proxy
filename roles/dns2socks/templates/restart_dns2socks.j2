@@ -1,5 +1,5 @@
 #!/bin/sh
 
-killall dns2socks
+killall -q dns2socks
 {{ D2S_BIN_FILE }} /q 0.0.0.0:{{ SSR_LOCAL_PORT }} 8.8.8.8:53 127.0.0.1:{{ D2S_LOCAL_PORT }} &
 

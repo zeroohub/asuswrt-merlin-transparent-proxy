@@ -3,6 +3,7 @@
 from subprocess import check_output
 import math
 import json
+import sys
 
 
 def call(cmd):
@@ -25,10 +26,13 @@ def list_ipset(name):
     return call(f"ipset list {name}").split('\n')[8:]
 
 
-def update_china_ips():
+def update_china_ips(skip=False):
     ipset_name = "{{ COMMON_IPSET_CHINA_NAME }}"
     create_ipset(ipset_name)
-    result = call("curl -L 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest'")
+    if not skip:
+        call("curl -C - -L 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' -o {{ IPSET_APNIC_FILE }}")
+    with open('{{ IPSET_APNIC_FILE }}') as f:
+        result = f.read()
     china_ips = [ip.split('|')[3:5] for ip in result.split('\n') if 'CN|ipv4' in ip]
     china_nets = {f"{ip}/{32 - int(math.log(float(num), 2))}" for ip, num in china_ips}
     existing_nets = set(list_ipset(ipset_name))
@@ -60,5 +64,8 @@ def update_whitelist_ips():
 
 
 if __name__ == '__main__':
-    update_china_ips()
+    skip = False
+    if len(sys.argv) > 1:
+        skip = True
+    update_china_ips(skip)
     update_whitelist_ips()

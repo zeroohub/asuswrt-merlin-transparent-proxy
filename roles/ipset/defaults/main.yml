@@ -2,6 +2,7 @@
 
 IPSET_CFG_DIR: "{{ COMMON_CFG_DIR }}/ipset"
 IPSET_UPDATE_WHITELIST_FILE: "{{ COMMON_BIN_DIR }}/update_whitelist"
+IPSET_APNIC_FILE: "{{ IPSET_CFG_DIR }}/apnic.txt"
 
 IPSET_WHITELIST_IPS:
   - 0.0.0.0/8
@@ -23,8 +24,8 @@ IPSET_WHITELIST_IPS:
   - 224.0.0.0/4
   - 240.0.0.0/4
   - 255.255.255.255
-  - 202.12.29.205 # ftp.apnic.net
-  - 81.4.123.217 # entware
+#  - 202.12.29.205 # ftp.apnic.net
+#  - 81.4.123.217 # entware
 #  - 151.101.76.133 # raw.githubusercontent.com
 #  - 151.101.40.133 # raw.githubusercontent.com
 
