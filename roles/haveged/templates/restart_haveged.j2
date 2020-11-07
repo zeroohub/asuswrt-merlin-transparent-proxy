@@ -1,0 +1,4 @@
+#!/bin/sh
+
+killall -q haveged
+{{ HAVEGED_BIN_FILE }} -w 1024 >/dev/null 2>&1

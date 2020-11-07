@@ -1,0 +1,16 @@
+---
+
+- name: copy bin file
+  copy:
+    src: haveged
+    dest: "{{ HAVEGED_BIN_FILE }}"
+    mode: 0755
+
+- name: setup control file
+  template:
+    src: restart_haveged.j2
+    dest: "{{ HAVEGED_CONTROL_FILE }}"
+    mode: 0755
+
+- name: make sure haveged restarted
+  command: "{{ HAVEGED_CONTROL_FILE }}"
