@@ -31,9 +31,11 @@ def apply_rule():
 
 
 def clean_rule():
-    run('iptables -t nat -D PREROUTING -p udp -m udp', True)
+    run('iptables -t nat -D PREROUTING -p udp -m udp --dport 53 -j DNAT --to-destination 192.168.50.1:{{ CLASH_DNS_PORT }}', True)
     run(f'iptables -t nat -D PREROUTING -j {RULE_NAME}', True)
     run('iptables -t nat -D PREROUTING -p tcp --dport 22 -j ACCEPT', True)
+    run(f'iptables -t nat -F {RULE_NAME}', True)
+    run(f'iptables -t nat -X {RULE_NAME}', True)
 
 
 if __name__ == '__main__':

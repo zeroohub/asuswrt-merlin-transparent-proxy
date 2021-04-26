@@ -4,7 +4,7 @@
   file:
     name: "{{ CLASH_CFG_DIR }}"
     state: directory
-    mode: 0644
+    mode: 0755
 
 - name: clash config files
   template:
@@ -12,20 +12,21 @@
     dest: "{{ item.dest }}"
     mode: "{{ item.mode }}"
   loop:
-    - {src: subscribes.txt.j2, dest: "{{ CLASH_SUBSCRIBES_FILE }}", mode: 0644}
-    - {src: S25clash.j2, dest: "{{ CLASH_INITD_FILE }}", mode: 0755}
-    - {src: update_subscribes.py, dest: "{{ CLASH_UPDATE_SUBSCRIBES_FILE }}", mode: 0755}
-    - {src: switch_config.py, dest: "{{ CLASH_SWITCH_CONFIG_FILE }}", mode: 0755}
+    - {src: subscribes.txt.j2, dest: "{{ CLASH_SUBSCRIBES_FILE }}", mode: "0644"}
+    - {src: config.yaml.override.j2, dest: "{{ CLASH_CFG_DIR }}/config.yaml.override", mode: "0644"}
+    - {src: S25clash.j2, dest: "{{ CLASH_INITD_FILE }}", mode: "0755"}
+    - {src: update_subscribes.py, dest: "{{ CLASH_UPDATE_SUBSCRIBES_FILE }}", mode: "0755"}
+    - {src: switch_config.py, dest: "{{ CLASH_SWITCH_CONFIG_FILE }}", mode: "0755"}
 
 
 - name: clash config files
-  file:
+  copy:
     src: "{{ item.src }}"
-    path: "{{ item.dest }}"
+    dest: "{{ item.dest }}"
     mode: "{{ item.mode }}"
   loop:
-    - {src: clash, dest: "{{ CLASH_BIN_FILE }}", mode: 0755}
-    - {src: Country.mmdb, dest: "{{ CLASH_COUNTRY_FILE }}", mode: 0644}
+    - {src: clash, dest: "{{ CLASH_BIN_FILE }}", mode: "0755"}
+    - {src: Country.mmdb, dest: "{{ CLASH_COUNTRY_FILE }}", mode: "0644"}
 
 
 - name: config cron for update subscribes

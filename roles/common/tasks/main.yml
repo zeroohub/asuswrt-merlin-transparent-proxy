@@ -15,7 +15,7 @@
   file:
     name: "{{ item }}"
     state: directory
-    mode: 0644
+    mode: 0755
   loop:
     - "{{ COMMON_ROOT_DIR }}"
     - "{{ COMMON_CFG_DIR }}"
@@ -26,4 +26,7 @@
 
 - name: install packages
   opkg:
-    
+    name: "{{ item }}"
+  loop:
+    - python3
+    - python3-yaml

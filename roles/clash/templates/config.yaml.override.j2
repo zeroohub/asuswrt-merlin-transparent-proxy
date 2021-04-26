@@ -1,0 +1,11 @@
+redir-port: {{ CLASH_REDIR_PORT }}
+allow-lan: true
+dns:
+    enable: true
+    listen: 0.0.0.0:{{ CLASH_DNS_PORT }}
+    enhanced-mode: redir-host
+    nameserver:
+     - 119.29.29.29
+     - 223.5.5.5
+hosts:
+    'router.asus.com': 192.168.50.1
