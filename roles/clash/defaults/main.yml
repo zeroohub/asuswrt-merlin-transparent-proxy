@@ -1,0 +1,28 @@
+---
+
+
+CLASH_CFG_DIR: "{{ COMMON_CFG_DIR }}/clash"
+CLASH_CFG_FILE: "{{ CLASH_CFG_DIR }}/config.yaml"
+CLASH_COUNTRY_FILE: "{{ CLASH_CFG_DIR }}/Country.mmdb"
+CLASH_BIN_FILE: "{{ COMMON_BIN_DIR }}/clash"
+CLASH_SUBSCRIBES_FILE: "{{ CLASH_CFG_DIR }}/subscribes.txt"
+CLASH_INITD_FILE: "{{ COMMON_INITD_DIR }}/S25clash"
+CLASH_SUBSCRIBES: []
+CLASH_REDIR_PORT: 7892
+CLASH_DNS_PORT: 55
+SSR_SUBSCRIBES_DIR: "{{ SSR_CFG_DIR }}/subscribes"
+SSR_SUBSCRIBES_LIST_FILE: "{{ SSR_CFG_DIR }}/subscribes.txt"
+
+SSR_DEFAULT_NODE: null
+CLASH_UPDATE_SUBSCRIBES_FILE: "{{COMMON_BIN_DIR}}/update_subscribes"
+SSR_SWITCH_NODE_FILE: "{{COMMON_BIN_DIR}}/switch_node"
+SSR_REDIR_PORT: 1080
+SSR_LOCAL_PORT: 1081
+
+SSR_REDIR_CFG:
+  local_port: "{{ SSR_REDIR_PORT }}"
+  local_address: "0.0.0.0"
+
+SSR_LOCAL_CFG:
+  local_port: "{{ SSR_LOCAL_PORT }}"
+  local_address: "0.0.0.0"

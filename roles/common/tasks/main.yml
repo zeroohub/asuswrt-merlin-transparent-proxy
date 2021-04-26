@@ -22,3 +22,8 @@
     - "{{ COMMON_INITD_DIR }}"
     - "{{ COMMON_BIN_DIR }}"
     - "{{ COMMON_TMP_DIR }}"
+
+
+- name: install packages
+  opkg:
+    

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import json
 from subprocess import check_call, check_output, CalledProcessError
 
 RULE_NAME = "{{ IPTABLES_RULE_NAME }}"
@@ -18,31 +17,23 @@ def run(cmd, ignore=False):
             raise
 
 
-def get_ssr_port():
-    with open('{{ SSR_REDIR_CFG_FILE }}') as f:
-        ssr_cfg = json.loads(f.read())
-        return ssr_cfg['local_port']
-
-
 def create_rule():
-    command = f"iptables -t nat -A {RULE_NAME} -p tcp "
+    command = f"iptables -t nat -A {RULE_NAME} "
     run('iptables -t nat -N ' + RULE_NAME)
-    run(command + "--dport 853 -j RETURN")
-    run(command + "-m set --match-set {{ COMMON_IPSET_WHITELIST_NAME }} dst -j RETURN")
-    run(command + "-m set --match-set {{ COMMON_IPSET_CHINA_NAME }} dst -j RETURN")
-    run(command + f"-j REDIRECT --to-ports {get_ssr_port()}")
+    run(command + "-d 192.168.0.0/16 -j RETURN")
+    run(command + "-p tcp -j REDIRECT --to-ports {{ CLASH_REDIR_PORT }}")
 
 
 def apply_rule():
-    run('iptables -t nat -A PREROUTING -p tcp -j ' + RULE_NAME)
-    run('iptables -t nat -A OUTPUT -p tcp -j ' + RULE_NAME)
+    run('iptables -t nat -A PREROUTING -p tcp --dport 22 -j ACCEPT')
+    run(f'iptables -t nat -A PREROUTING -j {RULE_NAME}')
+    run('iptables -t nat -A PREROUTING -p udp -m udp --dport 53 -j DNAT --to-destination 192.168.50.1:{{ CLASH_DNS_PORT }}')
 
 
 def clean_rule():
-    run('iptables -t nat -D PREROUTING -p tcp -j ' + RULE_NAME, True)
-    run('iptables -t nat -D OUTPUT -p tcp -j ' + RULE_NAME, True)
-    run('iptables -t nat -F ' + RULE_NAME, True)
-    run('iptables -t nat -X ' + RULE_NAME, True)
+    run('iptables -t nat -D PREROUTING -p udp -m udp', True)
+    run(f'iptables -t nat -D PREROUTING -j {RULE_NAME}', True)
+    run('iptables -t nat -D PREROUTING -p tcp --dport 22 -j ACCEPT', True)
 
 
 if __name__ == '__main__':

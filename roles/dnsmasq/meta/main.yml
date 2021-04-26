@@ -1,4 +1,0 @@
----
-dependencies:
-  - common_vars
-  - dns2socks

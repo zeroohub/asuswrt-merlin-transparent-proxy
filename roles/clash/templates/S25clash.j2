@@ -1,0 +1,12 @@
+#!/bin/sh
+
+ENABLED=yes
+PROCS=clash
+ARGS="-d {{ CLASH_CFG_DIR }} -f {{ CLASH_CFG_FILE }}"
+PREARGS=""
+DESC=$PROCS
+PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:{{ COMMON_BIN_DIR }}
+
+[ -z "$(which $PROCS)" ] && exit 0
+
+. /opt/etc/init.d/rc.func

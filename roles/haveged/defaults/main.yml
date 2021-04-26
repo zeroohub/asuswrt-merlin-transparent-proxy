@@ -1,4 +1,0 @@
----
-
-HAVEGED_BIN_FILE: "{{ COMMON_BIN_DIR }}/haveged"
-HAVEGED_CONTROL_FILE: "{{ COMMON_BIN_DIR }}/restart_haveged"

@@ -24,6 +24,3 @@
   lineinfile:
     line: 'cru a iptables_setup_redirect "0 4 * * 0 {{ IPTABLES_SETUP_REDIRECT_FILE }}"'
     path: "{{ JFFS_WAN_START_FILE }}"
-
-- name: config iptables
-  command: "{{ IPTABLES_SETUP_REDIRECT_FILE }}"

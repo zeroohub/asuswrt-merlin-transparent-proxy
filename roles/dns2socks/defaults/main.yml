@@ -1,5 +1,0 @@
----
-
-D2S_BIN_FILE: "{{ COMMON_BIN_DIR }}/dns2socks"
-D2S_CONTROL_FILE: "{{ COMMON_BIN_DIR }}/restart_dns2socks"
-D2S_LOCAL_PORT: 1053
